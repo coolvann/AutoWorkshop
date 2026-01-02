@@ -19,6 +19,9 @@ public:
     ~ScheduleTabWidget();
     void loadWeek(const QDate &startDate);
     QDate getCurrentWeekStart(const QDate &date);
+    void onPressNextWeekButton();
+    void onPressPreviousWeekButton();
+    updateTicketStatus();
 
 private:
     Ui::ScheduleTabWidget *ui;

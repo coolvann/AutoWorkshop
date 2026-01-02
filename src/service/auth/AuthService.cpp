@@ -19,7 +19,7 @@ LoginResult AuthService::login(const QString& username, const QString& password)
     if(!db.isOpen())
     {
         loginResult.ok = false;
-        loginResult.error = db.getLastDbError() + " db is not open.";
+        loginResult.error = "Database err: " + db.getLastDbError() + ". Db is not open.";
         return loginResult;
     }
 

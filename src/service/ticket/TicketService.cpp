@@ -104,9 +104,17 @@ bool TicketService::updateTicketStatus(const Ticket& ticket, TicketStatus newSta
     return m_db->updateTicketStatus(ticket, newStatus);
 }
 
+bool TicketService::updateTicketStatusById(const int ticketId, const int newStatus)
+{
+    return m_db->updateTicketStatusById(ticketId, newStatus);
+}
 
 
 
+QList<Ticket> TicketService::getAllTickets()
+{
+    return m_db->getAllTickets();
+}
 
 
 

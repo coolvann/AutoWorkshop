@@ -29,7 +29,7 @@ void LoginWidget::onLoginClicked()
     if(!loginResult.ok || !loginResult.session.has_value())
     {
         setLoginErrorLabel(loginResult.error);
-        qDebug() << loginResult.error;
+        qDebug() << "Logging err: " << loginResult.error;
         return;
     }
 

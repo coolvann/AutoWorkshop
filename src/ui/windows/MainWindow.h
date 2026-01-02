@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "ui/windows/scheduleTab/ScheduleTabWidget.h"
+#include "ui/windows/ticketsTab/TicketsTabWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,5 +27,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     ScheduleTabWidget* scheduleTab;
+    TicketsTabWidget* ticketsTab;
 };
 #endif // MAINWINDOW_H

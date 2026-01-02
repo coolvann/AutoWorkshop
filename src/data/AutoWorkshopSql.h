@@ -13,11 +13,12 @@ public:
     AutoWorkshopSql();
     ~AutoWorkshopSql();
 
-    bool openDb(const QString& dbFilePath);
+    bool openDb();
     bool isOpen() const;
     void close();
-
     bool initSchema();
+    QString getLastDbError() const;
+
     bool verifyUser(const QString& username, const QString& password, int* userId = nullptr, QString* role = nullptr);
     bool checkUserExist(const QString& username);
     bool createAccount(const QString& username, const QString& password);
@@ -25,10 +26,10 @@ public:
     QList<Ticket> filterTicketById(const QString &input);
     QList<Ticket> getWeeklyTickets(const QDate& startDate, const QDate& endDate);
     bool updateTicketStatus(const Ticket& ticket, TicketStatus newStatus);
-    QString getLastDbError() const;
+    bool updateTicketStatusById(int ticketId, int newStatus);
+    QList<Ticket> getAllTickets();
 
 private:
-    QString connectionName;
     QSqlDatabase db;
     QString lastDbError;
 

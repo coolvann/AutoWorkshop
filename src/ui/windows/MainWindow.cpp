@@ -53,13 +53,17 @@ void MainWindow::loadAllTabs()
 {
     ui->tabWidget->clear();   // 清空Designer自带的 page
     scheduleTab = new ScheduleTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
+    ticketsTab = new TicketsTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
     ui->tabWidget->addTab(scheduleTab, "Schedule");
+    ui->tabWidget->addTab(ticketsTab, "Tickets");
+    qDebug() << "All tabs loaded successfully.";
 
 }
 
 void MainWindow::setFirstTabPage()
 {
     ui->tabWidget->setCurrentWidget(scheduleTab);
+    qDebug() << "First tab page is set as schedule.";
 }
 
 

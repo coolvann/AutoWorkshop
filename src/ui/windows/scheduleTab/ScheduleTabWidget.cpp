@@ -26,6 +26,9 @@ ScheduleTabWidget::ScheduleTabWidget(TicketService* ticketService, QWidget *pare
 
     currentWeekStart = getCurrentWeekStart(QDate::currentDate());
     loadWeek(currentWeekStart);
+    // week change
+    connect(ui->PreviousWeekButton, &QPushButton::clicked, this, &ScheduleTabWidget::onPressPreviousWeekButton);
+    connect(ui->nextWeekButton, &QPushButton::clicked, this, &ScheduleTabWidget::onPressNextWeekButton);
 }
 
 /**
@@ -96,7 +99,21 @@ QDate ScheduleTabWidget::getCurrentWeekStart(const QDate &date)
     return startOfWeek;
 }
 
+void ScheduleTabWidget::onPressNextWeekButton()
+{
+    currentWeekStart = currentWeekStart.addDays(7);
+    loadWeek(currentWeekStart);
+}
+
+void ScheduleTabWidget::onPressPreviousWeekButton()
+{
+    currentWeekStart = currentWeekStart.addDays(-7);
+    loadWeek(currentWeekStart);
+}
+
 ScheduleTabWidget::~ScheduleTabWidget()
 {
     delete ui;
 }
+
+

@@ -15,6 +15,8 @@ public:
     Ticket refreshStatus(const Ticket& ticket);
     QPair<QTime, QTime> calculateTimeRange(const Ticket& ticket);
     bool updateTicketStatus(const Ticket& ticket, TicketStatus newStatus);
+    bool updateTicketStatusById(const int ticketId, const int newStatus);
+    QList<Ticket> getAllTickets();
 private:
     AutoWorkshopSql* m_db;
 };

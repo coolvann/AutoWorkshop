@@ -1,13 +1,15 @@
 #include "AutoWorkshopSql.h"
-
+#include <QStandardPaths>
+#include <QDir>
 #include <QUuid>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
+#include "service/model/enums/TicketStatus.h"
 
 AutoWorkshopSql::AutoWorkshopSql()
 {
-    connectionName = "autoworkshop_vann";
+    QString connectionName = "autoworkshop_vann";
     if (QSqlDatabase::contains(connectionName))
         db = QSqlDatabase::database(connectionName);
     else
@@ -15,16 +17,20 @@ AutoWorkshopSql::AutoWorkshopSql()
 
 }
 
-bool AutoWorkshopSql::openDb(const QString& dbFilePath)
+bool AutoWorkshopSql::openDb()
 {
-    lastDbError.clear();
-    db.setDatabaseName(dbFilePath);
-    if(!db.open())
-    {
-        lastDbError = db.lastError().text();
-        return false;
-    }
-    return true;
+    if (db.isOpen())
+        return true;
+
+    QString dirPath = QStandardPaths::writableLocation(
+        QStandardPaths::AppDataLocation);
+
+    QDir().mkpath(dirPath);
+
+    QString path = dirPath + "/autoworkshop_vann.db";
+    db.setDatabaseName(path);
+
+    return db.open();
 }
 
 bool AutoWorkshopSql::isOpen() const
@@ -49,6 +55,8 @@ bool AutoWorkshopSql::initSchema()
         lastDbError = "DB is not open.";
         return false;
     }
+
+    qDebug() << "Db is open. Create tables if not existed...";
 
     // crate a query object
     QSqlQuery query(db);
@@ -103,7 +111,7 @@ bool AutoWorkshopSql::initSchema()
     }
 
 
-    qDebug() << "Tables: " << db.tables();
+    qDebug() << "Tables created success: " << db.tables();
 
     return true;
 
@@ -196,7 +204,7 @@ Ticket AutoWorkshopSql::getTicket(int ticketId)
 {
     Ticket ticket;
 
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("select * from tickets where id =:ticketId");
     query.bindValue(":ticketId", ticketId);
 
@@ -229,7 +237,7 @@ QList<Ticket> AutoWorkshopSql::filterTicketById(const QString &input)
 {
     QList<Ticket> tickets;
 
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("select * from tickets where cast(id as text) like :input");
     query.bindValue(":input", "%" + input + "%");
 
@@ -265,7 +273,7 @@ QList<Ticket> AutoWorkshopSql::filterTicketById(const QString &input)
 
 QList<Ticket> AutoWorkshopSql::getWeeklyTickets(const QDate& startDate, const QDate& endDate)
 {
-    QSqlQuery query;
+    QSqlQuery query(db);
     QString queryString = QString("select * from tickets where date >= '%1' and date <= '%2' order by date asc")
                               .arg(startDate.toString("yyyy-MM-dd"))
                               .arg(endDate.toString("yyyy-MM-dd"));
@@ -299,7 +307,7 @@ QList<Ticket> AutoWorkshopSql::getWeeklyTickets(const QDate& startDate, const QD
 
 bool AutoWorkshopSql::updateTicketStatus(const Ticket& ticket, TicketStatus newStatus)
 {
-    QSqlQuery query;
+    QSqlQuery query(db);
     QString queryString = QString("update tickets set status = %1 where id = %2")
                               .arg(ticketStatusToInt(newStatus))
                               .arg(ticket.id);
@@ -313,9 +321,74 @@ bool AutoWorkshopSql::updateTicketStatus(const Ticket& ticket, TicketStatus newS
     return true;
 }
 
+bool AutoWorkshopSql::updateTicketStatusById(int ticketId, int newStatus)
+{
+    QSqlQuery query(db);
+    QString queryString = QString("update tickets set status = %1 where id = %2")
+                              .arg(newStatus)
+                              .arg(ticketId);
+    qDebug() << queryString;
+
+    if (!query.exec(queryString))
+    {
+        qDebug() << "Car_workshop_sql::updateTickeStatus Query failed:" << query.lastError();
+        return false;
+    }
+    return true;
+}
+
+
 QString AutoWorkshopSql::getLastDbError() const
 {
     return lastDbError;
+}
+
+QList<Ticket> AutoWorkshopSql::getAllTickets()
+{
+    QList<Ticket> tickets;
+
+    QSqlQuery query("select * from tickets", db);
+    while (query.next()) {
+        qDebug() << "DB file:" << query.value(2).toString();
+        Ticket ticket;
+        ticket.id= query.value("id").toInt();
+        ticket.customer = query.value("customer").toString();
+        ticket.brand = query.value("brand").toString();
+        ticket.model = query.value("model").toString();
+        ticket.resgisId = query.value("regis_id").toString();
+        //ticket.empNames
+        ticket.empNames = query.value("emp_name").toString().split(", ");
+        ticket.date = query.value("date").toString();
+        ticket.timeSlots.append(query.value("slot0").toInt());
+        ticket.timeSlots.append(query.value("slot1").toInt());
+        ticket.timeSlots.append(query.value("slot2").toInt());
+        ticket.timeSlots.append(query.value("slot3").toInt());
+        ticket.timeSlots.append(query.value("slot4").toInt());
+        ticket.description = query.value("description").toString();
+        qDebug() << "Ticket status: " + query.value("status").toString();
+        ticket.status = intToTicketStatus(query.value("status").toInt());
+
+        tickets.append(ticket);
+    }
+    qDebug() << "==== Tickets fetched:" << tickets.size() << "====";
+
+    for (int i = 0; i < tickets.size(); ++i) {
+        const Ticket& t = tickets[i];
+        qDebug()
+            << "Ticket[" << i << "]"
+            << "id=" << t.id
+            << "customer=" << t.customer
+            << "brand=" << t.brand
+            << "model=" << t.model
+            << "regisId=" << t.resgisId
+            << "empNames=" << t.empNames
+            << "date=" << t.date
+            << "slots=" << t.timeSlots
+            << "status=" << ticketStatusToString(t.status);
+    }
+
+
+    return tickets;
 }
 
 AutoWorkshopSql::~AutoWorkshopSql() = default;

@@ -1,6 +1,8 @@
 #include "AppContext.h"
 #include "data/AutoWorkshopSql.h"
 #include <QDebug>
+#include <QStandardPaths>
+#include <QDir>
 
 AppContext& AppContext::instance()
 {
@@ -11,26 +13,19 @@ AppContext& AppContext::instance()
 AppContext::AppContext(QObject* parent):QObject(parent)
 {
     db = std::make_unique<AutoWorkshopSql>();
+    // open database
+    if (!db->openDb()) {
+        qFatal("Cannot open database");
+    }
+    // create tables if not exist
+    if (!db->initSchema()) {
+        qFatal("Cannot init database schema");
+    }
     ticketService = std::make_unique<TicketService>(db.get());
 }
 
 AutoWorkshopSql& AppContext::getDb()
 {
-    // if db open then return
-    if(db->isOpen())
-        return *db;
-
-    // otherwise the create db
-    QString path = "autoworkshop_vann.db";
-    if(!db->openDb(path))
-    {
-        qCritical()<<"Failed to oprn db."<< db->getLastDbError();
-    } else if(!db->initSchema())
-    {   // create schema
-        qCritical()<<"Failed to init schema." << db->getLastDbError();
-    } else {
-        qDebug()<<"Database is open: " << path;
-    }
     return *db;
 }
 
