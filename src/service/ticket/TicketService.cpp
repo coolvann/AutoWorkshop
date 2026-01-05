@@ -1,5 +1,6 @@
 #include "TicketService.h"
 #include "service/ticket/TimeSlotsProvider.h"
+#include "logger/Log.h"
 
 TicketService::TicketService(AutoWorkshopSql* db):m_db(db)
 {
@@ -28,6 +29,7 @@ TicketStatus TicketService::calculateStatus(const Ticket& ticket, const QDate& c
 {
     if(QDate::fromString(ticket.date, "yyyy-MM-dd") < currentDate.addDays(-7))
     {   // ticket one week ago - closed
+        qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: Closed";
         return TicketStatus::Closed;
 
     }
@@ -35,6 +37,7 @@ TicketStatus TicketService::calculateStatus(const Ticket& ticket, const QDate& c
     if (QDate::fromString(ticket.date, "yyyy-MM-dd") > currentDate)
     {
         // future work - created
+        qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: Created";
         return TicketStatus::Created;
 
     }
@@ -44,13 +47,22 @@ TicketStatus TicketService::calculateStatus(const Ticket& ticket, const QDate& c
 
         auto [start, end] = calculateTimeRange(ticket);
         if (end <= currentTime)
-            return TicketStatus::Done;
+        {
+            qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: Created";
+            return TicketStatus::Created;
+        }
         if (start <= currentTime)
+        {
+            qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: InProgress";
             return TicketStatus::InProgress;
+        }
+
+        qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: Created";
         return TicketStatus::Created;
 
     }
 
+    qCInfo(logTicket) << "Ticke id: " << ticket.id << " new status: Done";
     return TicketStatus::Done;
 }
 
@@ -64,6 +76,7 @@ Ticket TicketService::refreshStatus(const Ticket& ticket)
     TicketStatus newStatus = calculateStatus(ticket, QDate::currentDate(), QTime::currentTime());
 
     if (newStatus != ticket.status) {
+        qCInfo(logTicket) << "Update status in db: " + ticket.id;
         m_db->updateTicketStatus(ticket, newStatus);
     }
 
@@ -116,9 +129,15 @@ QList<Ticket> TicketService::getAllTickets()
     return m_db->getAllTickets();
 }
 
+void TicketService::setError(QString err)
+{
+    error = err;
+}
 
-
-
+QString TicketService::getError()
+{
+    return error;
+}
 
 
 

@@ -1,5 +1,6 @@
 #include "LoginWidget.h"
 #include "ui_LoginWidget.h"
+#include "logger/Log.h"
 #include <QDebug>
 
 LoginWidget::LoginWidget(QWidget *parent)
@@ -20,7 +21,7 @@ LoginWidget::~LoginWidget()
 
 void LoginWidget::onLoginClicked()
 {
-    qDebug() << "Login button clicked!";
+    qCInfo(logUi) << "Login button clicked!";
     setLoginErrorLabel("");
     const QString username = ui->usernameInput->text();
     const QString password = ui->passwordInput->text();
@@ -29,11 +30,11 @@ void LoginWidget::onLoginClicked()
     if(!loginResult.ok || !loginResult.session.has_value())
     {
         setLoginErrorLabel(loginResult.error);
-        qDebug() << "Logging err: " << loginResult.error;
+        qCCritical(logUi) << "Logging err: " << loginResult.error;
         return;
     }
 
-    qDebug() << "Login success!";
+    qCInfo(logUi) << "Login success!";
     emit loginSuccess(loginResult.session);
 
 }

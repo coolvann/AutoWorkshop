@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "ui/windows/scheduleTab/ScheduleTabWidget.h"
 #include "ui/windows/ticketsTab/TicketsTabWidget.h"
+#include "ui/windows/employeeTab/EmployeeTabWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,5 +29,6 @@ private:
     Ui::MainWindow *ui;
     ScheduleTabWidget* scheduleTab;
     TicketsTabWidget* ticketsTab;
+    EmployeeTabWidget* employeeTab;
 };
 #endif // MAINWINDOW_H

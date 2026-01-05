@@ -1,5 +1,6 @@
 #include "SlotWidget.h"
 #include "ui_SlotWidget.h"
+#include "logger/Log.h"
 #include <QLayout>
 #include <QMouseEvent>
 #include <QDrag>
@@ -76,7 +77,7 @@ void SlotWidget::mouseMoveEvent(QMouseEvent *event) {
 void SlotWidget::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasFormat("application/x-ticket")) {
         dragStartPosition = event->position().toPoint();
-        qDebug()<<"SlotWidget::dragEnterEvent: "<< dragStartPosition;
+        qCInfo(logUi) <<"SlotWidget::dragEnterEvent: "<< dragStartPosition;
         event->acceptProposedAction();
     }
 }

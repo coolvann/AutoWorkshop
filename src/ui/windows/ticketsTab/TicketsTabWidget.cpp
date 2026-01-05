@@ -20,8 +20,8 @@ TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, QWidget *parent
     ui->ticketsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //ui->ticketsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->ticketsTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->ticketsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    ui->ticketsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    //ui->ticketsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    //ui->ticketsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 
     // get all tickets
     QList<Ticket> tickets = ticketService->getAllTickets();

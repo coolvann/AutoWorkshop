@@ -5,6 +5,7 @@
 #include "app/AppContext.h"
 #include <QStackedLayout>
 #include <QDebug>
+#include "logger/Log.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,13 +27,13 @@ MainWindow::MainWindow(QWidget *parent)
     // switch to create accoutn widget
     connect(loginWidget, &LoginWidget::switchToCreateAccountWidget, this, [loginupStack, createAccountWidget](){
         loginupStack->setCurrentWidget(createAccountWidget);
-        qDebug() << "Switched to createAccountWidget.";
+        qCInfo(logUi) << "Switched to createAccountWidget.";
     });
 
     // switch to login widget
     connect(createAccountWidget, &CreateAccountWidget::switchToLoginWidget, this, [loginupStack, loginWidget](){
         loginupStack->setCurrentWidget(loginWidget);
-         qDebug() << "Switched to loginWidget.";
+        qCInfo(logUi) << "Switched to loginWidget.";
     });
 
     // on success login, switch to main page: load all tabs; show main page -> schedule
@@ -54,9 +55,11 @@ void MainWindow::loadAllTabs()
     ui->tabWidget->clear();   // 清空Designer自带的 page
     scheduleTab = new ScheduleTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
     ticketsTab = new TicketsTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
+    employeeTab = new EmployeeTabWidget(AppContext::instance().getEmployeeService(), ui->tabWidget);
     ui->tabWidget->addTab(scheduleTab, "Schedule");
     ui->tabWidget->addTab(ticketsTab, "Tickets");
-    qDebug() << "All tabs loaded successfully.";
+    ui->tabWidget->addTab(employeeTab, "Employee");
+    qCInfo(logUi) << "All 3 tabs loaded successfully.";
 
 }
 

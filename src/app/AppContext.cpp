@@ -22,6 +22,7 @@ AppContext::AppContext(QObject* parent):QObject(parent)
         qFatal("Cannot init database schema");
     }
     ticketService = std::make_unique<TicketService>(db.get());
+    employeeService = std::make_unique<EmployeeService>(db.get());
 }
 
 AutoWorkshopSql& AppContext::getDb()
@@ -32,6 +33,11 @@ AutoWorkshopSql& AppContext::getDb()
 TicketService* AppContext::getTicketService()
 {
     return ticketService.get();
+}
+
+EmployeeService* AppContext::getEmployeeService()
+{
+    return employeeService.get();
 }
 
 // user session

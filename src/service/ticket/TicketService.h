@@ -17,8 +17,11 @@ public:
     bool updateTicketStatus(const Ticket& ticket, TicketStatus newStatus);
     bool updateTicketStatusById(const int ticketId, const int newStatus);
     QList<Ticket> getAllTickets();
+    void setError(QString err);
+    QString getError();
 private:
     AutoWorkshopSql* m_db;
+    QString error;
 };
 
 #endif // TICKETSERVICE_H

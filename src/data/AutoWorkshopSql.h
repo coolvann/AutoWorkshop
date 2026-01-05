@@ -6,6 +6,7 @@
 #include <QDate>
 #include "service/model/entity/Ticket.h"
 #include "service/model/enums/TicketStatus.h"
+#include "service/model/dtos/EmployeeDto.h"
 
 class AutoWorkshopSql
 {
@@ -18,6 +19,7 @@ public:
     void close();
     bool initSchema();
     QString getLastDbError() const;
+    QSqlQuery createQuery();
 
     bool verifyUser(const QString& username, const QString& password, int* userId = nullptr, QString* role = nullptr);
     bool checkUserExist(const QString& username);
@@ -28,6 +30,9 @@ public:
     bool updateTicketStatus(const Ticket& ticket, TicketStatus newStatus);
     bool updateTicketStatusById(int ticketId, int newStatus);
     QList<Ticket> getAllTickets();
+
+    // empployee
+    bool addEmployee(const EmployeeDto& info);
 
 private:
     QSqlDatabase db;

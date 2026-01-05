@@ -5,7 +5,9 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QDateTime>
 #include "service/model/enums/TicketStatus.h"
+#include "logger/Log.h"
 
 AutoWorkshopSql::AutoWorkshopSql()
 {
@@ -46,6 +48,11 @@ void AutoWorkshopSql::close()
     }
 }
 
+QSqlQuery AutoWorkshopSql::createQuery()
+{
+    return QSqlQuery(db);
+}
+
 // create tables if not exist
 bool AutoWorkshopSql::initSchema()
 {
@@ -59,7 +66,8 @@ bool AutoWorkshopSql::initSchema()
     qDebug() << "Db is open. Create tables if not existed...";
 
     // crate a query object
-    QSqlQuery query(db);
+    //QSqlQuery query(db);
+    auto query = createQuery();
 
     // users table
     if(!query.exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL);"))
@@ -70,8 +78,8 @@ bool AutoWorkshopSql::initSchema()
 
     // employees
 
-    if(!query.exec("CREATE TABLE IF NOT EXISTS employees (em_id integer PRIMARY KEY AUTOINCREMENT, "
-                   "name text NOT NULL, phone text, hour_pay integer, create_at text);"))
+    if(!query.exec("CREATE TABLE IF NOT EXISTS employees (id integer PRIMARY KEY AUTOINCREMENT, "
+                   "name text NOT NULL, tel text, create_at text);"))
     {
         lastDbError = query.lastError().text();
         return false;
@@ -127,7 +135,7 @@ bool AutoWorkshopSql::verifyUser(const QString& username, const QString& passwor
         return false;
     }
 
-    QSqlQuery query(db);
+    auto query = createQuery();
     query.prepare("SELECT id FROM users WHERE username=? AND password=? ");
     query.addBindValue(username); query.addBindValue(password);
     qDebug() << "connection name:" << db.connectionName();
@@ -160,7 +168,7 @@ bool AutoWorkshopSql::checkUserExist(const QString& username)
         return false;
     }
 
-    QSqlQuery query(db);
+    auto query = createQuery();
     query.prepare("SELECT id FROM users WHERE username = ?");
     query.addBindValue(username);
     if (!query.exec())
@@ -188,7 +196,7 @@ bool AutoWorkshopSql::createAccount(const QString& username, const QString& pass
         return false;
     }
 
-    QSqlQuery query(db);
+    auto query = createQuery();
     query.prepare("INSERT INTO users (username, password) VALUES (?, ?)");
     query.addBindValue(username); query.addBindValue(password);
     if (!query.exec())
@@ -204,7 +212,7 @@ Ticket AutoWorkshopSql::getTicket(int ticketId)
 {
     Ticket ticket;
 
-    QSqlQuery query(db);
+    auto query = createQuery();
     query.prepare("select * from tickets where id =:ticketId");
     query.bindValue(":ticketId", ticketId);
 
@@ -237,7 +245,7 @@ QList<Ticket> AutoWorkshopSql::filterTicketById(const QString &input)
 {
     QList<Ticket> tickets;
 
-    QSqlQuery query(db);
+    auto query = createQuery();
     query.prepare("select * from tickets where cast(id as text) like :input");
     query.bindValue(":input", "%" + input + "%");
 
@@ -273,7 +281,7 @@ QList<Ticket> AutoWorkshopSql::filterTicketById(const QString &input)
 
 QList<Ticket> AutoWorkshopSql::getWeeklyTickets(const QDate& startDate, const QDate& endDate)
 {
-    QSqlQuery query(db);
+    auto query = createQuery();
     QString queryString = QString("select * from tickets where date >= '%1' and date <= '%2' order by date asc")
                               .arg(startDate.toString("yyyy-MM-dd"))
                               .arg(endDate.toString("yyyy-MM-dd"));
@@ -307,7 +315,7 @@ QList<Ticket> AutoWorkshopSql::getWeeklyTickets(const QDate& startDate, const QD
 
 bool AutoWorkshopSql::updateTicketStatus(const Ticket& ticket, TicketStatus newStatus)
 {
-    QSqlQuery query(db);
+    auto query = createQuery();
     QString queryString = QString("update tickets set status = %1 where id = %2")
                               .arg(ticketStatusToInt(newStatus))
                               .arg(ticket.id);
@@ -323,7 +331,7 @@ bool AutoWorkshopSql::updateTicketStatus(const Ticket& ticket, TicketStatus newS
 
 bool AutoWorkshopSql::updateTicketStatusById(int ticketId, int newStatus)
 {
-    QSqlQuery query(db);
+    auto query = createQuery();
     QString queryString = QString("update tickets set status = %1 where id = %2")
                               .arg(newStatus)
                               .arg(ticketId);
@@ -347,7 +355,8 @@ QList<Ticket> AutoWorkshopSql::getAllTickets()
 {
     QList<Ticket> tickets;
 
-    QSqlQuery query("select * from tickets", db);
+    auto query = createQuery();
+    query.exec("select * from tickets");
     while (query.next()) {
         qDebug() << "DB file:" << query.value(2).toString();
         Ticket ticket;
@@ -391,4 +400,23 @@ QList<Ticket> AutoWorkshopSql::getAllTickets()
     return tickets;
 }
 
+// emp
+// TODO: check duplicated employee name
+bool AutoWorkshopSql::addEmployee(const EmployeeDto& info)
+{
+
+    auto query = createQuery();
+    query.prepare("insert into employees (name, tel, create_at) values (:name, :tel, :create_at)");
+    query.bindValue(":name", info.name);
+    query.bindValue(":tel", info.tel);
+    query.bindValue(":create_at", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+
+    if (!query.exec()) {
+        qCCritical(logDb) << "Error executing SQL query:"<<query.lastError();
+        lastDbError = query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
 AutoWorkshopSql::~AutoWorkshopSql() = default;

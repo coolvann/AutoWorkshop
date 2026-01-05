@@ -1,6 +1,7 @@
 #include "CreateAccountWidget.h"
 #include "ui_CreateAccountWidget.h"
 #include "service/auth/AuthService.h"
+#include "logger/Log.h"
 #include <QMessageBox>
 
 CreateAccountWidget::CreateAccountWidget(QWidget *parent)
@@ -24,7 +25,7 @@ void CreateAccountWidget::onLoginButtonClicked()
 
 void CreateAccountWidget::onCreateAccountClicked()
 {
-    qDebug() << "Create account button clicked!";
+    qCInfo(logUi) << "Create account button clicked!";
     setCreateAccountErrorLabel("");
     const QString username = ui->usernameInput->text();
     const QString password = ui->passwordInput->text();
@@ -37,7 +38,7 @@ void CreateAccountWidget::onCreateAccountClicked()
         return;
     }
 
-    qDebug() << "Create account success!";
+    qCInfo(logUi) << "Create account success!";
     QMessageBox::information(this, "Success", "Account created, please log in.");
     emit switchToLoginWidget();
 }

@@ -2,7 +2,8 @@
 #include "ui_ScheduleTabWidget.h"
 #include "app/AppContext.h"
 #include "service/model/entity/Ticket.h"
-#include "ui/widgets/SlotWidget.h"
+#include "ui/widgets/slotWidget/SlotWidget.h"
+#include "logger/Log.h"
 
 ScheduleTabWidget::ScheduleTabWidget(TicketService* ticketService, QWidget *parent)
     : QWidget(parent)
@@ -49,10 +50,10 @@ void ScheduleTabWidget::loadWeek(const QDate& currentWeekStart)
     foreach (const Ticket& ticket, tickets) {
 
         // Convert date and time to row and column indices
-        qDebug()<<"date: " << ticket.date;
+        qCDebug(logUi) <<"date: " << ticket.date;
         QDate date = QDate::fromString(ticket.date, "yyyy-MM-dd");
         int col = date.dayOfWeek()-1; // monday 1
-        qDebug()<<"day of week" <<col;
+        qCDebug(logUi) <<"day of week" <<col;
 
         Ticket updatedTicket = ticketService->refreshStatus(ticket);
         for (int i = 0; i < 5; ++i)
@@ -65,7 +66,7 @@ void ScheduleTabWidget::loadWeek(const QDate& currentWeekStart)
                 slotInfo->setTicketInfo(updatedTicket);
                 // check if there already has a ticket widget
                 QWidget* existingWidget = ui->scheduleTable->cellWidget(row*2, col);
-                qDebug()<<"set ticket slot widget";
+                qCInfo(logUi)<<"set ticket slot widget";
                 if (existingWidget)
                     // put to next
                     ui->scheduleTable->setCellWidget(row*2+1, col, slotInfo);

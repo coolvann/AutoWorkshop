@@ -4,8 +4,7 @@ struct Employee
 {
     int emId;
     QString name;
-    QString phone;
-    double hourPay;
+    QString tel;
     QString createTime;
 
 };
