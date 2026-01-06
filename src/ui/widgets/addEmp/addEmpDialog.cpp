@@ -11,6 +11,7 @@ AddEmpDialog::AddEmpDialog(EmployeeService* employeeService, QWidget *parent)
 {
     ui->setupUi(this);
     connect(ui->okButton, &QPushButton::clicked, this, &AddEmpDialog::onClickOKButton);
+    connect(ui->cancelButton, &QPushButton::clicked, this, &AddEmpDialog::onClickCancelButton);
 }
 
 void AddEmpDialog::onClickOKButton()
@@ -20,16 +21,26 @@ void AddEmpDialog::onClickOKButton()
     QString name = ui->nameLineEdit->text().trimmed();
     QString tel = ui->telLineEdit->text().trimmed();
     if (name == "" || tel == "")
+    {
         ui->errorLabel->setText("Please fill all inputs.");
+        return;
+    }
+
     // store info to db
     EmployeeDto newEmp;
     newEmp.name = name; newEmp.tel = tel;
     if (!employeeService->addEmployee(newEmp))
     {
         QMessageBox::critical(this, "Fail to add employee.", employeeService->getError());
+        return;
     }
     QMessageBox::information(this, "Success", "Employee added successfully.");
-    return;
+    accept();
+}
+
+void AddEmpDialog::onClickCancelButton()
+{
+    reject();
 }
 
 AddEmpDialog::~AddEmpDialog()

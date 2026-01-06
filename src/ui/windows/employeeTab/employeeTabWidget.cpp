@@ -2,6 +2,7 @@
 #include "ui_EmployeeTabWidget.h"
 #include "ui/widgets/addEmp/AddEmpDialog.h"
 #include "logger/Log.h"
+#include <QDialog>
 
 EmployeeTabWidget::EmployeeTabWidget(EmployeeService* employeeService, QWidget *parent)
     : QWidget(parent)
@@ -19,7 +20,14 @@ void EmployeeTabWidget::onClickAddButton()
 {
     qCInfo(logUiWidgetsAddEmp) << "Clicked add button";
     AddEmpDialog addEmpDialog(employeeService, this);
-    addEmpDialog.exec();
+    if (addEmpDialog.exec() == QDialog::Accepted)
+    {
+        addEmpDialog.close();
+        // TODO: refresh the emp table
+    } else
+    {
+        addEmpDialog.close();
+    }
 }
 
 EmployeeTabWidget::~EmployeeTabWidget()

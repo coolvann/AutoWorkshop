@@ -16,6 +16,7 @@ public:
     explicit AddEmpDialog(EmployeeService* employeeService, QWidget *parent = nullptr);
     ~AddEmpDialog();
     void onClickOKButton();
+    void onClickCancelButton();
 
 private:
     Ui::AddEmpDialog *ui;

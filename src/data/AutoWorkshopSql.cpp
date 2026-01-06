@@ -401,11 +401,26 @@ QList<Ticket> AutoWorkshopSql::getAllTickets()
 }
 
 // emp
-// TODO: check duplicated employee name
 bool AutoWorkshopSql::addEmployee(const EmployeeDto& info)
 {
 
     auto query = createQuery();
+    query.prepare("select * from employees where name = :name");
+    query.bindValue(":name", info.name);
+
+    if (!query.exec())
+    {
+        qCCritical(logDb) << "Error executing SQL query:"<<query.lastError();
+        lastDbError = query.lastError().text();
+        return false;
+    }
+
+    if (query.next())
+    {
+        lastDbError = "Employee exists.";
+        return false;
+    }
+
     query.prepare("insert into employees (name, tel, create_at) values (:name, :tel, :create_at)");
     query.bindValue(":name", info.name);
     query.bindValue(":tel", info.tel);
@@ -418,5 +433,6 @@ bool AutoWorkshopSql::addEmployee(const EmployeeDto& info)
     }
 
     return true;
+
 }
 AutoWorkshopSql::~AutoWorkshopSql() = default;
