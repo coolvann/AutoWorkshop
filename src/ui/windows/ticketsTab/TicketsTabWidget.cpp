@@ -27,7 +27,7 @@ TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, QWidget *parent
     QList<Ticket> tickets = ticketService->getAllTickets();
     displayAllTickets(tickets);
 
-
+    // TODO: show create ticket page
 }
 
 void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )
