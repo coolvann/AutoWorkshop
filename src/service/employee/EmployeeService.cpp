@@ -20,6 +20,11 @@ void EmployeeService::setError(QString err)
     error = err;
 }
 
+QList<Employee> EmployeeService::getAllEmployees()
+{
+    return m_db->getAllEmployees();
+}
+
 QString EmployeeService::getError()
 {
     return error;

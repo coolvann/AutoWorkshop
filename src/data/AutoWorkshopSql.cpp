@@ -435,4 +435,32 @@ bool AutoWorkshopSql::addEmployee(const EmployeeDto& info)
     return true;
 
 }
+
+QList<Employee> AutoWorkshopSql::getAllEmployees()
+{
+    QList<Employee> employees;
+    auto query = createQuery();
+    query.prepare("select * from employees");
+    if (!query.exec())
+    {
+        qCCritical(logDb) << "Error executing SQL query:"<<query.lastError();
+        lastDbError = query.lastError().text();
+        return employees;
+    }
+
+    while (query.next())
+    {
+        Employee employee;
+        employee.id = query.value("id").toInt();
+        employee.name = query.value("name").toString();
+        employee.tel = query.value("tel").toString();
+        employee.createTime = query.value("create_at").toString();
+        employees.append(employee);
+    }
+
+    qCInfo(logDb) << "Executing query getting all employees success!" << " Size: " << employees.size();
+
+    return employees;
+}
+
 AutoWorkshopSql::~AutoWorkshopSql() = default;

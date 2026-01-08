@@ -2,12 +2,14 @@
 #define EMPLOYEESERVICE_H
 #include "data/AutoWorkshopSql.h"
 #include "service/model/dtos/EmployeeDto.h"
+#include "service/model/entity/Employee.h"
 
 class EmployeeService
 {
 public:
     EmployeeService(AutoWorkshopSql* db);
     bool addEmployee(const EmployeeDto& newEmp);
+    QList<Employee> getAllEmployees();
     void setError(QString err);
     QString getError();
 

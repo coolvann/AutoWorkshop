@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QDate>
 #include "service/model/entity/Ticket.h"
+#include "service/model/entity/Employee.h"
 #include "service/model/enums/TicketStatus.h"
 #include "service/model/dtos/EmployeeDto.h"
 
@@ -33,6 +34,7 @@ public:
 
     // empployee
     bool addEmployee(const EmployeeDto& info);
+    QList<Employee> getAllEmployees();
 
 private:
     QSqlDatabase db;

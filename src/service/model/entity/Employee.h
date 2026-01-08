@@ -2,7 +2,7 @@
 #define EMPLOYEE_H
 struct Employee
 {
-    int emId;
+    int id;
     QString name;
     QString tel;
     QString createTime;
