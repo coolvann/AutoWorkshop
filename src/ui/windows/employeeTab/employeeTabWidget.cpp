@@ -38,6 +38,11 @@ void EmployeeTabWidget::onClickAddButton()
 void EmployeeTabWidget::refreshEmployeeTable()
 {
     QList<Employee> employees = employeeService->getAllEmployees();
+    displayOnEmployeeTable(employees);
+}
+
+void EmployeeTabWidget::displayOnEmployeeTable(const QList<Employee>& employees)
+{
     ui->tableWidget->clearContents();
     ui->tableWidget->setRowCount(employees.size());
     // do not show number on left table side
