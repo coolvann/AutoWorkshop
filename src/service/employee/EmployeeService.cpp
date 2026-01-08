@@ -25,6 +25,11 @@ QList<Employee> EmployeeService::getAllEmployees()
     return m_db->getAllEmployees();
 }
 
+QList<Employee> EmployeeService::filterByName(const QString& name)
+{
+    return m_db->filterByName(name);
+}
+
 QString EmployeeService::getError()
 {
     return error;

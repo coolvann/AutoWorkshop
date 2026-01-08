@@ -17,6 +17,10 @@ EmployeeTabWidget::EmployeeTabWidget(EmployeeService* employeeService, QWidget *
 
     // click add button show add emp dialog
     connect(ui->addEmpButton, &QPushButton::clicked, this, &EmployeeTabWidget::onClickAddButton);
+    // filter
+    connect(ui->findEmpButton, &QPushButton::clicked, this, &EmployeeTabWidget::filterEmployee);
+    connect(ui->empNameLineEdit, &QLineEdit::returnPressed,this, &EmployeeTabWidget::filterEmployee);
+
 
 }
 
@@ -27,7 +31,6 @@ void EmployeeTabWidget::onClickAddButton()
     if (addEmpDialog.exec() == QDialog::Accepted)
     {
         addEmpDialog.close();
-        // TODO: refresh the emp table
         refreshEmployeeTable();
     } else
     {
@@ -63,6 +66,13 @@ void EmployeeTabWidget::displayOnEmployeeTable(const QList<Employee>& employees)
         ui->tableWidget->setItem(row, 3, createTime);
         row++;
     }
+}
+
+void EmployeeTabWidget::filterEmployee()
+{
+    QString name = ui->empNameLineEdit->text();
+    QList<Employee> filterRes = employeeService->filterByName(name);
+    displayOnEmployeeTable(filterRes);
 }
 
 EmployeeTabWidget::~EmployeeTabWidget()

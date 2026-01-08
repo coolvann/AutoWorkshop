@@ -10,6 +10,7 @@ public:
     EmployeeService(AutoWorkshopSql* db);
     bool addEmployee(const EmployeeDto& newEmp);
     QList<Employee> getAllEmployees();
+    QList<Employee> filterByName(const QString& name);
     void setError(QString err);
     QString getError();
 

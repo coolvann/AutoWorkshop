@@ -35,6 +35,7 @@ public:
     // empployee
     bool addEmployee(const EmployeeDto& info);
     QList<Employee> getAllEmployees();
+    QList<Employee> filterByName(const QString& name);
 
 private:
     QSqlDatabase db;

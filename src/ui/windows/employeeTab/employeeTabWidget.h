@@ -17,6 +17,7 @@ public:
     explicit EmployeeTabWidget(EmployeeService* employeeService, QWidget *parent = nullptr);
     void displayOnEmployeeTable(const QList<Employee>& employees);
     void refreshEmployeeTable();
+    void filterEmployee();
     ~EmployeeTabWidget();
     void onClickAddButton();
 

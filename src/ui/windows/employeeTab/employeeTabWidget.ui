@@ -118,7 +118,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Join</string>
+       <string>Joined on</string>
       </property>
      </column>
     </widget>
