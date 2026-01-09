@@ -9,25 +9,23 @@ TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, QWidget *parent
     , ticketService(ticketService)
 {
     ui->setupUi(this);
+    createTicketWidget = new CreateTicketWidget(ticketService);
+    ui->stackedWidget->addWidget(createTicketWidget);
     // can only select row
     ui->ticketsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     // select only one row
     ui->ticketsTable->setSelectionMode(QAbstractItemView::SingleSelection);
-
     // cannot edit cell
     ui->ticketsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->ticketsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    //ui->ticketsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->ticketsTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //ui->ticketsTable->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    //ui->ticketsTable->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 
     // get all tickets
     QList<Ticket> tickets = ticketService->getAllTickets();
     displayAllTickets(tickets);
-
-    // TODO: show create ticket page
+    // show create ticket page
+    connect(ui->createTicketButton, &QPushButton::clicked, this, [this](){ui->stackedWidget->setCurrentWidget(createTicketWidget);});
 }
 
 void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )

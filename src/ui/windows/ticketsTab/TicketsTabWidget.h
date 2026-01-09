@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "service/ticket/TicketService.h"
+#include "ui/windows/createTicket/CreateTicketWidget.h"
 
 namespace Ui {
 class TicketsTabWidget;
@@ -21,6 +22,7 @@ public:
 private:
     Ui::TicketsTabWidget *ui;
     TicketService* ticketService;
+    CreateTicketWidget* createTicketWidget;
 };
 
 #endif // TICKETSTABWIDGET_H
