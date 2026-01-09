@@ -3,13 +3,15 @@
 #include "service/ticket/TimeSlotsProvider.h"
 #include <QMessageBox>
 
-TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, QWidget *parent)
+TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::TicketsTabWidget)
     , ticketService(ticketService)
+    , employeeService(employeeService)
+    , employeeScheduleService(employeeScheduleService)
 {
     ui->setupUi(this);
-    createTicketWidget = new CreateTicketWidget(ticketService);
+    createTicketWidget = new CreateTicketWidget(ticketService, employeeService, employeeScheduleService);
     ui->stackedWidget->addWidget(createTicketWidget);
     // can only select row
     ui->ticketsTable->setSelectionBehavior(QAbstractItemView::SelectRows);

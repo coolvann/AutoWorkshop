@@ -78,41 +78,73 @@ bool AutoWorkshopSql::initSchema()
 
     // employees
 
-    if(!query.exec("CREATE TABLE IF NOT EXISTS employees (id integer PRIMARY KEY AUTOINCREMENT, "
-                   "name text NOT NULL, tel text, create_at text);"))
+    if(!query.exec("CREATE TABLE IF NOT EXISTS employees ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    "name TEXT NOT NULL, "
+                    "tel TEXT, "
+                    "create_at TEXT);"))
     {
         lastDbError = query.lastError().text();
         return false;
     }
 
-    // emp_calendar
-    if(!query.exec("CREATE TABLE IF NOT EXISTS emp_calendar (id INTEGER PRIMARY KEY AUTOINCREMENT, em_id INTEGER NOT NULL, "
-                   "name TEXT NOT NULL, appoint_date TEXT, ticket_id INTEGER NOT NULL, customer TEXT, "
-                   "slot0 INTEGER, slot1 INTEGER, slot2 INTEGER, slot3 INTEGER, slot4 INTEGER);"))
+    // emp_schedule
+    if(!query.exec("CREATE TABLE IF NOT EXISTS emp_schedule ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    "emp_id INTEGER NOT NULL, "
+                    "ticket_id INTEGER NOT NULL, "
+                    "schedule_date TEXT,"
+                    "slot0 INTEGER, "
+                    "slot1 INTEGER, "
+                    "slot2 INTEGER, "
+                    "slot3 INTEGER, "
+                    "slot4 INTEGER);"))
     {
         lastDbError = query.lastError().text();
         return false;
     }
 
     // tickets table
-    if(!query.exec("CREATE TABLE IF NOT EXISTS tickets (id integer PRIMARY KEY AUTOINCREMENT, customer TEXT, brand text, model text, "
-                   "regis_id text, emp_name TEXT, date text, slot0 int, slot1 int, slot2 int, slot3 int, slot4 int, "
-                   "description text, status INTEGER, total_to_pay REAL);"))
+    if(!query.exec("CREATE TABLE IF NOT EXISTS tickets ("
+                    "id integer PRIMARY KEY AUTOINCREMENT, "
+                    "customer TEXT, "
+                    "brand text, "
+                    "model text, "
+                    "regis_id text, "
+                    "schedule_date text, "
+                    "slot0 int, "
+                    "slot1 int, "
+                    "slot2 int, "
+                    "slot3 int, "
+                    "slot4 int, "
+                    "description text, "
+                    "status INTEGER, "
+                    "total_to_pay REAL);"))
     {
         lastDbError = query.lastError().text();
         return false;
     }
 
     // ticket_parts
-    if(!query.exec("CREATE TABLE IF NOT EXISTS ticket_parts (ticket_id integer NOT NULL, part_name text, amount real, unit_price REAL);"))
+    if(!query.exec("CREATE TABLE IF NOT EXISTS ticket_parts ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    "ticket_id INTEGER NOT NULL, "
+                    "part_name TEXT, "
+                    "amount REAL, "
+                    "unit_price REAL);"))
     {
         lastDbError = query.lastError().text();
         return false;
     }
 
     // ticket_estimate
-    if(!query.exec("CREATE TABLE IF NOT EXISTS ticket_estimate (ticket_id integer NOT NULL, "
-                   "description text, expected_cost text, accepted integer);"))
+    if(!query.exec("CREATE TABLE IF NOT EXISTS ticket_estimate ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    "ticket_id INTEGER NOT NULL, "
+                    "description TEXT, "
+                    "expected_cost TEXT, "
+                    "accepted INTEGER,"
+                    "created_at TEXT);"))
     {
         lastDbError = query.lastError().text();
         return false;

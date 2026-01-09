@@ -7,6 +7,7 @@
 #include "app/UserSession.h"
 #include "service/ticket/TicketService.h"
 #include "service/employee/EmployeeService.h"
+#include "service/employeeSchedule/EmployeeScheduleService.h"
 
 class AutoWorkshopSql;
 
@@ -25,6 +26,7 @@ public:
 
     TicketService* getTicketService();
     EmployeeService* getEmployeeService();
+    EmployeeScheduleService* getEmployeeScheduleService();
 
 private:
     explicit AppContext(QObject* parent = nullptr);
@@ -37,6 +39,7 @@ private:
     std::unique_ptr<AutoWorkshopSql> db;   // single db
     std::unique_ptr<TicketService> ticketService;
     std::unique_ptr<EmployeeService> employeeService;
+    std::unique_ptr<EmployeeScheduleService> employeeScheduleService;
     std::optional<UserSession> m_session;
 
 };

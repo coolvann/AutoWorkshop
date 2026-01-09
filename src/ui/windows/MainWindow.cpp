@@ -54,7 +54,7 @@ void MainWindow::loadAllTabs()
 {
     ui->tabWidget->clear();   // 清空Designer自带的 page
     scheduleTab = new ScheduleTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
-    ticketsTab = new TicketsTabWidget(AppContext::instance().getTicketService(), ui->tabWidget);
+    ticketsTab = new TicketsTabWidget(AppContext::instance().getTicketService(), AppContext::instance().getEmployeeService(), AppContext::instance().getEmployeeScheduleService(), ui->tabWidget);
     employeeTab = new EmployeeTabWidget(AppContext::instance().getEmployeeService(), ui->tabWidget);
     ui->tabWidget->addTab(scheduleTab, "Schedule");
     ui->tabWidget->addTab(ticketsTab, "Tickets");

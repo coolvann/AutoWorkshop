@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "service/ticket/TicketService.h"
 #include "ui/windows/createTicket/CreateTicketWidget.h"
+#include "service/employee/EmployeeService.h"
 
 namespace Ui {
 class TicketsTabWidget;
@@ -14,7 +15,7 @@ class TicketsTabWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit TicketsTabWidget(TicketService* ticketService, QWidget *parent = nullptr);
+    explicit TicketsTabWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent = nullptr);
     void displayAllTickets(const QList<Ticket>& tickets );
     void updateTicketStatusById(int newStatus);
     ~TicketsTabWidget();
@@ -22,6 +23,8 @@ public:
 private:
     Ui::TicketsTabWidget *ui;
     TicketService* ticketService;
+    EmployeeService* employeeService;
+    EmployeeScheduleService* employeeScheduleService;
     CreateTicketWidget* createTicketWidget;
 };
 

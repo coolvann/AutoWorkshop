@@ -40,6 +40,11 @@ EmployeeService* AppContext::getEmployeeService()
     return employeeService.get();
 }
 
+EmployeeScheduleService* AppContext::getEmployeeScheduleService()
+{
+    return employeeScheduleService.get();
+}
+
 // user session
 void AppContext::setSession(const std::optional<UserSession>& session)
 {
