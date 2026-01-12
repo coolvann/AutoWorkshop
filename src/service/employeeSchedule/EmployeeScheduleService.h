@@ -1,12 +1,13 @@
 #ifndef EMPLOYEESCHEDULESERVICE_H
 #define EMPLOYEESCHEDULESERVICE_H
 #include "data/AutoWorkshopSql.h"
+#include "service/model/enums/EmpAvailability.h"
 
 class EmployeeScheduleService
 {
 public:
     EmployeeScheduleService(AutoWorkshopSql* db);
-    int checkEmployeeAvailability(const QString& appointedDate, const QList<int>& timeSlots, const QString& empId);
+    EmpAvailability checkEmployeeAvailability(const QString& empId, const QString& appointedDate, const QList<int>& timeSlots);
 
 private:
     AutoWorkshopSql* m_db;

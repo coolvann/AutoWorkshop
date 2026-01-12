@@ -524,4 +524,33 @@ QList<Employee> AutoWorkshopSql::filterByName(const QString& name)
     return employees;
 }
 
+int AutoWorkshopSql::countScheduleConflicts(const QString& empId, const QString& appointedDate, const QList<int>& timeSlots)
+{
+    QStringList slotConditions;
+    for (int i = 0; i < timeSlots.size(); ++i)
+    {
+        if (timeSlots[i] == 1)
+        {
+            slotConditions.append(QString("slot1% = 1").arg(i));
+        }
+
+    }
+    if (slotConditions.isEmpty())
+        return 0;
+    auto query = createQuery();
+    QString sqlString = QString("SELECT COUNT(*) FROM emp_schedule WHERE emp_id = :empId AND schedule_date = :appointedDate AND 1%")
+        .arg(slotConditions.join(" AND "));
+    query.prepare(sqlString);
+    query.bindValue(":empId", empId);
+    query.bindValue(":appointedDate", appointedDate);
+    if (!query.exec())
+    {
+        qCCritical(logDb) << "Error executing SQL query:"<<query.lastError();
+        lastDbError = query.lastError().text();
+        return 0;
+    }
+
+    return query.next() ? query.value(0).toInt() : 0;
+}
+
 AutoWorkshopSql::~AutoWorkshopSql() = default;

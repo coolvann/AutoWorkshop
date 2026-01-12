@@ -18,7 +18,7 @@ class CreateTicketWidget : public QWidget
 public:
     explicit CreateTicketWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent = nullptr);
     void setUpEmployeeList();
-    void refreshAvailability(const QListWidgetItem* item);
+    void refreshAvailability(QListWidgetItem* item);
     ~CreateTicketWidget();
 
 private:

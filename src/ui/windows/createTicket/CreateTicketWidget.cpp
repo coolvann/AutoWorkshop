@@ -2,6 +2,7 @@
 #include "ui_CreateTicketWidget.h"
 #include "service/model/entity/Employee.h"
 #include "logger/Log.h"
+#include <QMessageBox>
 
 CreateTicketWidget::CreateTicketWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent)
     : QWidget(parent)
@@ -30,7 +31,7 @@ void CreateTicketWidget::setUpEmployeeList()
     }
 }
 
-void CreateTicketWidget::refreshAvailability(const QListWidgetItem* item)
+void CreateTicketWidget::refreshAvailability(QListWidgetItem* item)
 {
     if(item->checkState() == Qt::Checked) {
         // Handle the checked state
@@ -47,14 +48,20 @@ void CreateTicketWidget::refreshAvailability(const QListWidgetItem* item)
         qCInfo(logUi) << "Check boxes states: " << timeSlots;
         QString empId = item->data(Qt::UserRole).toString();
         qCInfo(logUi) << "Selected employee id: " << empId;
-        int res = employeeScheduleService->checkEmployeeAvailability(appointedDate, timeSlots, empId);
-        // if (res == -1)
-        //     QMessageBox::information(nullptr, "Info", "Please choose slot first!");
-        // else if(res > 0)
-        // {
-        //     QMessageBox::information(nullptr, "Info", "Employee not available!");
-        //     item->setCheckState(Qt::Unchecked);
-        // }
+        EmpAvailability availability = employeeScheduleService->checkEmployeeAvailability(empId, appointedDate, timeSlots);
+        switch (availability)
+        {
+        case EmpAvailability::NoSlotSelected:
+            QMessageBox::information(this, "Tip", "Please check at least 1 slot!");
+            item->setCheckState(Qt::Unchecked);
+            break;
+        case EmpAvailability::Available:
+            break;
+        case EmpAvailability::NotAvailable:
+            QMessageBox::information(this, "Info", "Staff not available!");
+            item->setCheckState(Qt::Unchecked);
+            break;
+        }
     }
 }
 
