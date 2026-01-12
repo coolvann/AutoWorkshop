@@ -53,13 +53,17 @@ void CreateTicketWidget::refreshAvailability(QListWidgetItem* item)
         {
         case EmpAvailability::NoSlotSelected:
             QMessageBox::information(this, "Tip", "Please check at least 1 slot!");
+            ui->employeeListWidget->blockSignals(true);
             item->setCheckState(Qt::Unchecked);
+            ui->employeeListWidget->blockSignals(false);
             break;
         case EmpAvailability::Available:
             break;
         case EmpAvailability::NotAvailable:
             QMessageBox::information(this, "Info", "Staff not available!");
+            ui->employeeListWidget->blockSignals(true);
             item->setCheckState(Qt::Unchecked);
+            ui->employeeListWidget->blockSignals(false);
             break;
         }
     }

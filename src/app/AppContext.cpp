@@ -23,6 +23,7 @@ AppContext::AppContext(QObject* parent):QObject(parent)
     }
     ticketService = std::make_unique<TicketService>(db.get());
     employeeService = std::make_unique<EmployeeService>(db.get());
+    employeeScheduleService = std::make_unique<EmployeeScheduleService>(db.get());
 }
 
 AutoWorkshopSql& AppContext::getDb()

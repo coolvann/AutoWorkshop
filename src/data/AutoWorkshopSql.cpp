@@ -526,19 +526,21 @@ QList<Employee> AutoWorkshopSql::filterByName(const QString& name)
 
 int AutoWorkshopSql::countScheduleConflicts(const QString& empId, const QString& appointedDate, const QList<int>& timeSlots)
 {
+    qCInfo(logDb) << "Check employee schedule conflicts. ";
     QStringList slotConditions;
     for (int i = 0; i < timeSlots.size(); ++i)
     {
         if (timeSlots[i] == 1)
         {
-            slotConditions.append(QString("slot1% = 1").arg(i));
+            slotConditions.append(QString("slot%1 = 1").arg(i));
         }
 
     }
+    qCInfo(logDb) << "Slot conditions: " << slotConditions;
     if (slotConditions.isEmpty())
         return 0;
     auto query = createQuery();
-    QString sqlString = QString("SELECT COUNT(*) FROM emp_schedule WHERE emp_id = :empId AND schedule_date = :appointedDate AND 1%")
+    QString sqlString = QString("SELECT COUNT(*) FROM emp_schedule WHERE emp_id = :empId AND schedule_date = :appointedDate AND %1")
         .arg(slotConditions.join(" AND "));
     query.prepare(sqlString);
     query.bindValue(":empId", empId);
