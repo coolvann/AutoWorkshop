@@ -5,9 +5,9 @@
 #include <QString>
 #include "data/AutoWorkshopSql.h"
 #include "app/UserSession.h"
-#include "service/ticket/TicketService.h"
-#include "service/employee/EmployeeService.h"
-#include "service/employeeSchedule/EmployeeScheduleService.h"
+#include "service/ticketService/TicketService.h"
+#include "service/employeeService/EmployeeService.h"
+#include "service/employeeScheduleService/EmployeeScheduleService.h"
 
 class AutoWorkshopSql;
 

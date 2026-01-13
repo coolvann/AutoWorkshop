@@ -6,7 +6,7 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QDateTime>
-#include "service/model/enums/TicketStatus.h"
+#include "domain/ticket/TicketStatus.h"
 #include "logger/Log.h"
 
 AutoWorkshopSql::AutoWorkshopSql()

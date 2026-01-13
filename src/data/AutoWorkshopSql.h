@@ -4,10 +4,10 @@
 #include <QString>
 #include <QSqlDatabase>
 #include <QDate>
-#include "service/model/entity/Ticket.h"
-#include "service/model/entity/Employee.h"
-#include "service/model/enums/TicketStatus.h"
-#include "service/model/dtos/EmployeeDto.h"
+#include "domain/ticket/Ticket.h"
+#include "domain/employee/Employee.h"
+#include "domain/ticket/TicketStatus.h"
+#include "dtos/EmployeeDto.h"
 
 class AutoWorkshopSql
 {
