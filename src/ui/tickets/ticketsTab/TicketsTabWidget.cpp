@@ -87,6 +87,17 @@ void TicketsTabWidget::updateTicketStatusById(int newStatus)
 
 }
 
+bool TicketsTabWidget::canLeave()
+{
+    return !(createTicketWidget && createTicketWidget->hasUnsavedChanges()) ||
+           QMessageBox::question(this, "Unsaved changes", "Discard current information?") == QMessageBox::Yes;
+}
+
+void TicketsTabWidget::leaveAndClear()
+{
+    createTicketWidget->clearForm();
+}
+
 TicketsTabWidget::~TicketsTabWidget()
 {
     delete ui;

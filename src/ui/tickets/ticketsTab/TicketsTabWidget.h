@@ -5,12 +5,12 @@
 #include "service/ticketService/TicketService.h"
 #include "ui/tickets/createTicket/CreateTicketWidget.h"
 #include "service/employeeService/EmployeeService.h"
-
+#include "ui/common/navigation/ILeaveGuard.h"
 namespace Ui {
 class TicketsTabWidget;
 }
 
-class TicketsTabWidget : public QWidget
+class TicketsTabWidget : public QWidget, public ILeaveGuard
 {
     Q_OBJECT
 
@@ -19,6 +19,8 @@ public:
     void displayAllTickets(const QList<Ticket>& tickets );
     void updateTicketStatusById(int newStatus);
     ~TicketsTabWidget();
+    bool canLeave() override;
+    void leaveAndClear() override;
 
 private:
     Ui::TicketsTabWidget *ui;

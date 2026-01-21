@@ -20,6 +20,9 @@ public:
     void setUpEmployeeList();
     void refreshAvailability(QListWidgetItem* item);
     ~CreateTicketWidget();
+    bool hasUnsavedChanges();
+    void clearForm();
+
 
 private:
     Ui::CreateTicketWidget *ui;

@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "logger/Log.h"
 #include "ui/utils/TabsPages.h"
+#include "ui/common/navigation/ILeaveGuard.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -46,10 +47,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     });
 
-    // switch tab and clear form
-    connect(ui->tabWidget, &QTabWidget::tabBarClicked, this, &MainWindow::onTabChanged);
-
     // tickets->reload();
+
+    // when creating a new ticket and other tab is clicked
+    connect(ui->tabWidget->tabBar(), &QTabBar::tabBarClicked, this, &MainWindow::onClickOtherTab);
 }
 
 void MainWindow::loadAllTabs()
@@ -70,10 +71,30 @@ void MainWindow::setFirstTabPage()
     ui->tabWidget->setCurrentWidget(scheduleTab);
     qDebug() << "First tab page is set as schedule.";
 }
-
-void MainWindow::onTabChanged(int index)
+/**
+ * @brief MainWindow::onClickOtherTab
+ * @param index tab index clicked
+ */
+void MainWindow::onClickOtherTab(int index)
 {
-    //if (ui->tabWidget)
+    // index of current page
+    int currentIndex = ui->tabWidget->currentIndex();
+    // current page widget
+    QWidget* currentWidget = ui->tabWidget->widget(currentIndex);
+    // if it is create tikcet page no - nullptr
+    auto* leaveGuard = dynamic_cast<ILeaveGuard*>(currentWidget);
+    // on creating page and refuse to leave
+    if (leaveGuard && !leaveGuard->canLeave())
+    {
+        return;
+    }
+    // on creating page and agress to leave
+    if (leaveGuard)
+    {
+        leaveGuard->leaveAndClear();
+    }
+    // current page is other page
+    ui->tabWidget->setCurrentIndex(index);
 
 }
 

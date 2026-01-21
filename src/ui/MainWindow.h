@@ -21,7 +21,7 @@ public:
     ~MainWindow();
     void loadAllTabs();
     void setFirstTabPage();
-    void onTabChanged(int index);
+    void onClickOtherTab(int index);
 
 private slots:
 

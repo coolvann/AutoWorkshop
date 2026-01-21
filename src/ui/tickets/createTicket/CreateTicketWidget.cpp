@@ -69,6 +69,39 @@ void CreateTicketWidget::refreshAvailability(QListWidgetItem* item)
     }
 }
 
+bool CreateTicketWidget::hasUnsavedChanges()
+{
+    if (!ui->brandInput->text().isEmpty() || ui->checkBox1->isChecked() || ui->checkBox2->isChecked() || ui->checkBox3->isChecked() ||
+        ui->checkBox4->isChecked() || ui->checkBox5->isChecked() || !ui->customerInput->text().isEmpty() || !ui->descriptionInput->toPlainText().isEmpty()
+        || !ui->modelInput->text().isEmpty() || !ui->regisIdInput->text().isEmpty())
+    {
+        return true;
+    }
+    return false;
+}
+
+void CreateTicketWidget::clearForm()
+{
+    ui->customerInput->clear();
+    ui->brandInput->clear();
+    ui->modelInput->clear();
+    ui->regisIdInput->clear();
+
+    ui->dateInput->clear();
+
+    ui->checkBox1->setChecked(false);
+    ui->checkBox2->setChecked(false);
+    ui->checkBox3->setChecked(false);
+    ui->checkBox4->setChecked(false);
+    ui->checkBox5->setChecked(false);
+
+    ui->employeeListWidget->clearSelection();
+    for (int i = 0; i < ui->employeeListWidget->count(); ++i) {
+        auto* item = ui->employeeListWidget->item(i);
+        item->setCheckState(Qt::Unchecked);
+    }
+}
+
 CreateTicketWidget::~CreateTicketWidget()
 {
     delete ui;
