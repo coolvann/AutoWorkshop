@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QEvent>
 #include "ui/schedule/scheduleTab/ScheduleTabWidget.h"
 #include "ui/tickets/ticketsTab/TicketsTabWidget.h"
 #include "ui/employees/employeeTab/EmployeeTabWidget.h"
@@ -22,6 +23,7 @@ public:
     void loadAllTabs();
     void setFirstTabPage();
     void onClickOtherTab(int index);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private slots:
 

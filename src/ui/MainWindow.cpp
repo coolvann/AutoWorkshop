@@ -5,6 +5,7 @@
 #include "app/AppContext.h"
 #include <QStackedLayout>
 #include <QDebug>
+#include <QMouseEvent>
 #include "logger/Log.h"
 #include "ui/utils/TabsPages.h"
 #include "ui/common/navigation/ILeaveGuard.h"
@@ -14,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->tabWidget->tabBar()->installEventFilter(this);
     ui->stackedWidget->setCurrentWidget(ui->pageLoginSignup);
 
     // create a stackedwidget with parent logInUpHolder ***注意designer里logInUpHolder不能有任何布局,否则stack布局无效***
@@ -50,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     // tickets->reload();
 
     // when creating a new ticket and other tab is clicked
-    connect(ui->tabWidget->tabBar(), &QTabBar::tabBarClicked, this, &MainWindow::onClickOtherTab);
+    // connect(ui->tabWidget->tabBar(), &QTabBar::tabBarClicked, this, &MainWindow::onClickOtherTab);
 }
 
 void MainWindow::loadAllTabs()
@@ -77,9 +79,11 @@ void MainWindow::setFirstTabPage()
  */
 void MainWindow::onClickOtherTab(int index)
 {
+    qCInfo(logUi) << "tabWidget index clicked: " << index;
     // index of current page
     int currentIndex = ui->tabWidget->currentIndex();
-    // current page widget
+    qCInfo(logUi) << "tabWidget current index: " << currentIndex;
+    // current tab widget
     QWidget* currentWidget = ui->tabWidget->widget(currentIndex);
     // if it is create tikcet page no - nullptr
     auto* leaveGuard = dynamic_cast<ILeaveGuard*>(currentWidget);
@@ -96,6 +100,30 @@ void MainWindow::onClickOtherTab(int index)
     // current page is other page
     ui->tabWidget->setCurrentIndex(index);
 
+}
+
+bool MainWindow::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == ui->tabWidget->tabBar() && event->type() == QEvent::MouseButtonPress)
+    {
+        auto* mouseEvent = static_cast<QMouseEvent*>(event);
+        int clickedTabIndex = ui->tabWidget->tabBar()->tabAt(mouseEvent->pos());
+        qCInfo(logUi) << "tabWidget index clicked: " << clickedTabIndex;
+        int currentPageIndex = ui->tabWidget->currentIndex();
+        qCInfo(logUi) << "tabWidget current page index: " << currentPageIndex;
+        // whether cureent widget is create ticket page
+        auto* leaveGuard = dynamic_cast<ILeaveGuard*>(ui->tabWidget->widget(currentPageIndex));
+        if (leaveGuard && currentPageIndex == TicketsTabPages::TICKETS_TAB_CREATE && clickedTabIndex != Tabs::TAB_TICKETS)
+        {
+            if (!leaveGuard->canLeave())
+            {
+                return true;  // will not switch tab
+            }
+
+            leaveGuard->leaveAndClear();
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 MainWindow::~MainWindow()
