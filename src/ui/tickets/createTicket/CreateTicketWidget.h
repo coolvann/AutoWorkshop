@@ -6,12 +6,12 @@
 #include "service/employeeService/EmployeeService.h"
 #include "service/employeeScheduleService/EmployeeScheduleService.h"
 #include <QListWidgetItem>
-
+#include "ui/common/state/IUnsavedState.h"
 namespace Ui {
 class CreateTicketWidget;
 }
 
-class CreateTicketWidget : public QWidget
+class CreateTicketWidget : public QWidget, public IUnsavedState
 {
     Q_OBJECT
 
@@ -20,9 +20,11 @@ public:
     void setUpEmployeeList();
     void refreshAvailability(QListWidgetItem* item);
     ~CreateTicketWidget();
-    bool hasUnsavedChanges();
-    void clearForm();
-
+    bool hasUnsavedChanges() const override;
+    void clearState() override;
+    void onClickedCancel();
+signals:
+    void goToRootTab();
 
 private:
     Ui::CreateTicketWidget *ui;

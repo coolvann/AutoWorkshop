@@ -111,7 +111,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
         qCInfo(logUi) << "tabWidget index clicked: " << clickedTabIndex;
         int currentPageIndex = ui->tabWidget->currentIndex();
         qCInfo(logUi) << "tabWidget current page index: " << currentPageIndex;
-        // whether cureent widget is create ticket page
+        // whether cureent tab widget is tickets tab
         auto* leaveGuard = dynamic_cast<ILeaveGuard*>(ui->tabWidget->widget(currentPageIndex));
         if (leaveGuard && currentPageIndex == TicketsTabPages::TICKETS_TAB_CREATE && clickedTabIndex != Tabs::TAB_TICKETS)
         {

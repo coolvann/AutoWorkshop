@@ -2,7 +2,7 @@
 #include "ui_TicketsTabWidget.h"
 #include "service/ticketService/TimeSlotsProvider.h"
 #include <QMessageBox>
-
+#include "ui/utils/TabsPages.h"
 TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::TicketsTabWidget)
@@ -28,6 +28,9 @@ TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, EmployeeService
     displayAllTickets(tickets);
     // show create ticket page
     connect(ui->createTicketButton, &QPushButton::clicked, this, [this](){ui->stackedWidget->setCurrentWidget(createTicketWidget);});
+
+    // receive signal and switch to root
+    connect(createTicketWidget, &CreateTicketWidget::goToRootTab, this, [this](){ui->stackedWidget->setCurrentIndex(TicketsTabPages::TICKETS_TAB_MAIN);});
 }
 
 void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )
@@ -95,7 +98,7 @@ bool TicketsTabWidget::canLeave()
 
 void TicketsTabWidget::leaveAndClear()
 {
-    createTicketWidget->clearForm();
+    createTicketWidget->clearState();
 }
 
 TicketsTabWidget::~TicketsTabWidget()

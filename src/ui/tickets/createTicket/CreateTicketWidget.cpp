@@ -16,6 +16,9 @@ CreateTicketWidget::CreateTicketWidget(TicketService* ticketService, EmployeeSer
     setUpEmployeeList();
     // when employee checked, obtain availability
     connect(ui->employeeListWidget, &QListWidget::itemChanged, this, &CreateTicketWidget::refreshAvailability);
+
+    // when cancle is clicked
+    connect(ui->cancelButton, &QPushButton::clicked, this, &CreateTicketWidget::onClickedCancel);
 }
 
 
@@ -69,7 +72,7 @@ void CreateTicketWidget::refreshAvailability(QListWidgetItem* item)
     }
 }
 
-bool CreateTicketWidget::hasUnsavedChanges()
+bool CreateTicketWidget::hasUnsavedChanges() const
 {
     if (!ui->brandInput->text().isEmpty() || ui->checkBox1->isChecked() || ui->checkBox2->isChecked() || ui->checkBox3->isChecked() ||
         ui->checkBox4->isChecked() || ui->checkBox5->isChecked() || !ui->customerInput->text().isEmpty() || !ui->descriptionInput->toPlainText().isEmpty()
@@ -80,7 +83,7 @@ bool CreateTicketWidget::hasUnsavedChanges()
     return false;
 }
 
-void CreateTicketWidget::clearForm()
+void CreateTicketWidget::clearState()
 {
     ui->customerInput->clear();
     ui->brandInput->clear();
@@ -100,6 +103,14 @@ void CreateTicketWidget::clearForm()
         auto* item = ui->employeeListWidget->item(i);
         item->setCheckState(Qt::Unchecked);
     }
+}
+
+void CreateTicketWidget::onClickedCancel()
+{
+    if (hasUnsavedChanges() && QMessageBox::question(this, "Unsaved changes", "Discard current information?") == QMessageBox::No)
+        return;
+    clearState();
+    emit goToRootTab();
 }
 
 CreateTicketWidget::~CreateTicketWidget()
