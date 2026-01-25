@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    tabNavigationController = new TabNavigationController(ui->tabWidget, this);
     ui->tabWidget->tabBar()->installEventFilter(this);
     ui->stackedWidget->setCurrentWidget(ui->pageLoginSignup);
 
@@ -51,8 +52,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // tickets->reload();
 
-    // when creating a new ticket and other tab is clicked
-    // connect(ui->tabWidget->tabBar(), &QTabBar::tabBarClicked, this, &MainWindow::onClickOtherTab);
 }
 
 void MainWindow::loadAllTabs()
@@ -64,6 +63,9 @@ void MainWindow::loadAllTabs()
     ui->tabWidget->addTab(scheduleTab, "Schedule");
     ui->tabWidget->addTab(ticketsTab, "Tickets");
     ui->tabWidget->addTab(employeeTab, "Employee");
+    tabNavigationController->registerTabs(Tabs::TAB_SCHEDULE, scheduleTab->getStack());
+    tabNavigationController->registerTabs(Tabs::TAB_TICKETS, ticketsTab->getStack());
+    tabNavigationController->registerTabs(Tabs::TAB_EMPLOYEE, employeeTab->getStack());
     qCInfo(logUi) << "All 3 tabs loaded successfully.";
 
 }
@@ -72,34 +74,6 @@ void MainWindow::setFirstTabPage()
 {
     ui->tabWidget->setCurrentWidget(scheduleTab);
     qDebug() << "First tab page is set as schedule.";
-}
-/**
- * @brief MainWindow::onClickOtherTab
- * @param index tab index clicked
- */
-void MainWindow::onClickOtherTab(int index)
-{
-    qCInfo(logUi) << "tabWidget index clicked: " << index;
-    // index of current page
-    int currentIndex = ui->tabWidget->currentIndex();
-    qCInfo(logUi) << "tabWidget current index: " << currentIndex;
-    // current tab widget
-    QWidget* currentWidget = ui->tabWidget->widget(currentIndex);
-    // if it is create tikcet page no - nullptr
-    auto* leaveGuard = dynamic_cast<ILeaveGuard*>(currentWidget);
-    // on creating page and refuse to leave
-    if (leaveGuard && !leaveGuard->canLeave())
-    {
-        return;
-    }
-    // on creating page and agress to leave
-    if (leaveGuard)
-    {
-        leaveGuard->leaveAndClear();
-    }
-    // current page is other page
-    ui->tabWidget->setCurrentIndex(index);
-
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)
@@ -123,7 +97,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
             leaveGuard->leaveAndClear();
         }
     }
-    return QMainWindow::eventFilter(watched, event);
+    return QMainWindow::eventFilter(watched, event);  // switch tab
 }
 
 MainWindow::~MainWindow()

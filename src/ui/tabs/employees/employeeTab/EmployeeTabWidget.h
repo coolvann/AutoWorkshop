@@ -2,6 +2,7 @@
 #define EMPLOYEETABWIDGET_H
 
 #include <QWidget>
+#include <QStackedWidget>
 #include "service/employeeService/EmployeeService.h"
 
 
@@ -20,6 +21,7 @@ public:
     void filterEmployee();
     ~EmployeeTabWidget();
     void onClickAddButton();
+    QStackedWidget* getStack() const; // expose stack in design
 
 private:
     Ui::EmployeeTabWidget *ui;

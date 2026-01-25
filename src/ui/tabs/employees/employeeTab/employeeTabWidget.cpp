@@ -9,6 +9,7 @@ EmployeeTabWidget::EmployeeTabWidget(EmployeeService* employeeService, QWidget *
     , ui(new Ui::EmployeeTabWidget)
     , employeeService(employeeService)
 {
+
     ui->setupUi(this);
     // only single row can be selected
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -22,6 +23,11 @@ EmployeeTabWidget::EmployeeTabWidget(EmployeeService* employeeService, QWidget *
     connect(ui->empNameLineEdit, &QLineEdit::returnPressed,this, &EmployeeTabWidget::filterEmployee);
 
 
+}
+
+QStackedWidget* EmployeeTabWidget::getStack() const
+{
+    return ui->employeesStack;
 }
 
 void EmployeeTabWidget::onClickAddButton()

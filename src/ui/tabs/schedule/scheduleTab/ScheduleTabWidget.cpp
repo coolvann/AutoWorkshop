@@ -32,6 +32,11 @@ ScheduleTabWidget::ScheduleTabWidget(TicketService* ticketService, QWidget *pare
     connect(ui->nextWeekButton, &QPushButton::clicked, this, &ScheduleTabWidget::onPressNextWeekButton);
 }
 
+QStackedWidget* ScheduleTabWidget::getStack() const
+{
+    return ui->scheduleStack;
+}
+
 /**
  * @brief ScheduleTabWidget::loadWeek
  * @param currentWeekStart

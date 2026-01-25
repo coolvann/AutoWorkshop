@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QDate>
+#include <QStackedWidget>
 #include "data/AutoWorkshopSql.h"
 #include "service/ticketService/TicketService.h"
 
@@ -22,6 +23,7 @@ public:
     void onPressNextWeekButton();
     void onPressPreviousWeekButton();
     updateTicketStatus();
+    QStackedWidget* getStack() const; // expose stack in design
 
 private:
     Ui::ScheduleTabWidget *ui;

@@ -1,18 +1,18 @@
-#include "TicketsTabWidget.h"
-#include "ui_TicketsTabWidget.h"
+#include "TicketsHomePage.h"
+#include "ui_TicketsHomePage.h"
 #include "service/ticketService/TimeSlotsProvider.h"
 #include <QMessageBox>
 #include "ui/utils/TabsPages.h"
-TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget *parent)
+
+TicketsHomePage::TicketsHomePage(TicketService* ticketService, EmployeeService* employeeService, EmployeeScheduleService* employeeScheduleService, QWidget* parent)
     : QWidget(parent)
-    , ui(new Ui::TicketsTabWidget)
+    , ui(new Ui::TicketsHomePage)
     , ticketService(ticketService)
     , employeeService(employeeService)
     , employeeScheduleService(employeeScheduleService)
 {
     ui->setupUi(this);
-    createTicketWidget = new CreateTicketWidget(ticketService, employeeService, employeeScheduleService);
-    ui->stackedWidget->addWidget(createTicketWidget);
+
     // can only select row
     ui->ticketsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     // select only one row
@@ -27,13 +27,10 @@ TicketsTabWidget::TicketsTabWidget(TicketService* ticketService, EmployeeService
     QList<Ticket> tickets = ticketService->getAllTickets();
     displayAllTickets(tickets);
     // show create ticket page
-    connect(ui->createTicketButton, &QPushButton::clicked, this, [this](){ui->stackedWidget->setCurrentWidget(createTicketWidget);});
-
-    // receive signal and switch to root
-    connect(createTicketWidget, &CreateTicketWidget::goToRootTab, this, [this](){ui->stackedWidget->setCurrentIndex(TicketsTabPages::TICKETS_TAB_MAIN);});
+    connect(ui->createTicketButton, &QPushButton::clicked, this, &TicketsHomePage::onCreateClicked);
 }
 
-void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )
+void TicketsHomePage::displayAllTickets(const QList<Ticket>& tickets )
 {
 
 
@@ -58,7 +55,7 @@ void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )
         ui->ticketsTable->setItem(row, 4, new QTableWidgetItem(ticket.date));
 
         // manually change ticket status, update database
-        connect(combobox, &QComboBox::currentIndexChanged, this, &TicketsTabWidget::updateTicketStatusById);
+        connect(combobox, &QComboBox::currentIndexChanged, this, &TicketsHomePage::updateTicketStatusById);
 
         QStringList timeStr;
         for(int i =0; i <5; ++i)
@@ -76,11 +73,11 @@ void TicketsTabWidget::displayAllTickets(const QList<Ticket>& tickets )
 }
 
 // update ticket status when user changes it
-void TicketsTabWidget::updateTicketStatusById(int newStatus)
+void TicketsHomePage::updateTicketStatusById(int newStatus)
 {
     int row = ui->ticketsTable->currentRow();
     int ticketId = ui->ticketsTable->item(row, 0)->text().toInt();
-    qDebug()<<"TicketsTabWidget::updateTicketStatus id: " << ticketId << " to status: " << newStatus;
+    qDebug()<<"TicketsHomePage::updateTicketStatus id: " << ticketId << " to status: " << newStatus;
 
     bool res = ticketService->updateTicketStatusById(ticketId, newStatus);
     if (res)
@@ -90,18 +87,8 @@ void TicketsTabWidget::updateTicketStatusById(int newStatus)
 
 }
 
-bool TicketsTabWidget::canLeave()
-{
-    return !(createTicketWidget && createTicketWidget->hasUnsavedChanges()) ||
-           QMessageBox::question(this, "Unsaved changes", "Discard current information?") == QMessageBox::Yes;
-}
 
-void TicketsTabWidget::leaveAndClear()
-{
-    createTicketWidget->clearState();
-}
-
-TicketsTabWidget::~TicketsTabWidget()
+TicketsHomePage::~TicketsHomePage()
 {
     delete ui;
 }
