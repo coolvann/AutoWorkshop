@@ -9,11 +9,13 @@
 #include "service/employeeService/EmployeeService.h"
 #include "service/employeeScheduleService/EmployeeScheduleService.h"
 #include "ui/common/navigation/ILeaveGuard.h"
+#include "ui/tabs/baseTab/BaseTab.h"
+
 namespace Ui {
 class TicketsTabWidget;
 }
 
-class TicketsTabWidget : public QWidget, public ILeaveGuard
+class TicketsTabWidget : public BaseTab, public ILeaveGuard
 {
     Q_OBJECT
 
@@ -23,7 +25,6 @@ public:
     ~TicketsTabWidget();
     bool canLeave() override;
     void leaveAndClear() override;
-    QStackedWidget* getStack() const; // expose stack in design
 
 private:
     Ui::TicketsTabWidget *ui;
